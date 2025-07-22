@@ -1,0 +1,90 @@
+train_dataset:
+  dataset:
+    name: ref-image-folder
+    args:
+      root_path1: /IXI-H5/T2_train_mini
+      root_path2: /IXI-H5/PD_train_mini
+      repeat: 1
+  wrapper:
+    name: ref-sr-implicit-downsampled
+    args:
+      inp_size: 64
+      scale_max: 4
+      augment: true
+      sample_q: 4096
+  batch_size: 4
+
+val_dataset:
+  dataset:
+    name: ref-image-folder
+    args:
+      root_path1: /IXI-H5/T2_val_mini
+      root_path2: /IXI-H5/PD_val_mini
+      repeat: 1
+  wrapper:
+    name: ref-sr-implicit-downsampled
+    args:
+      inp_size: 64
+      scale_max: 4
+      sample_q: 4096
+  batch_size: 16
+
+data_norm:
+  inp: {sub: [0.5], div: [0.5]}
+
+eval_type: div2k-4
+eval_bsize: 30000
+
+model:
+  name: MBA
+  args:
+    encoder_spec:
+      name: brdn
+      args:
+        no_upsampling: true
+
+    ref_spec:
+      name: ref_text
+      args:
+        inp_channels: 1
+        out_channels: 256
+        dim: 48
+        num_blocks: 3
+    fusion_spec:
+      name: mamba_fusion
+      args:
+        dim: 64
+    imnet_spec:
+      name: mlp
+      args:
+        out_dim: 1
+        hidden_list: [256, 256, 256]
+    hidden_dim: 256
+
+ets:
+  name: fre_ets
+  args:
+    in_channels: 1
+    feat_dim: 32
+
+
+
+optimizer:
+  name: adam
+  args:
+    lr: 2.e-4
+optimizer_ets:
+  name: adam
+  args:
+    lr: 2.e-4
+
+epoch_max: 100
+multi_step_lr:
+  milestones: [20, 40, 60, 80]
+  gamma: 0.5
+
+epoch_val: 1
+epoch_save: 100
+
+resume: ~
+resume_ets: ~
