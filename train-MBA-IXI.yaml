@@ -31,6 +31,7 @@ val_dataset:
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
+  gt: {sub: [0.5], div: [0.5]}
 
 eval_type: div2k-4
 eval_bsize: 30000
