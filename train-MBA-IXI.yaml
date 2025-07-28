@@ -45,14 +45,14 @@ model:
         no_upsampling: true
 
     ref_spec:
-      name: ref_text
+      name: rtd
       args:
         inp_channels: 1
         out_channels: 256
         dim: 48
         num_blocks: 3
     fusion_spec:
-      name: mamba_fusion
+      name: lem_fusion
       args:
         dim: 64
     imnet_spec:
@@ -63,7 +63,7 @@ model:
     hidden_dim: 256
 
 ets:
-  name: fre_ets
+  name: rke
   args:
     in_channels: 1
     feat_dim: 32
