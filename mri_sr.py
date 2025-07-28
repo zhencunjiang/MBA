@@ -8,7 +8,7 @@ from models.LFEM  import  local_enhanced_blcok
 import numpy as np
 from models.LFEM import *
 
-@register('add_mamba_fusion_mri_ets_text')
+@register('MBA')
 class add_MRI_text(nn.Module):
 
     def __init__(self, encoder_spec,fusion_spec,ref_spec, imnet_spec=None, hidden_dim=256):
