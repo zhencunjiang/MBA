@@ -33,35 +33,34 @@ from PIL import Image
 import numpy as np
 def save_tensor_as_image(tensor, file_path):
     image_tensor = tensor.squeeze(0).squeeze(0)
-    # 将 Tensor 转换为 NumPy 数组
+   
     image_array = image_tensor.cpu().numpy()
-    # 如果 Tensor 数据范围是 [0, 1]，需要归一化到 [0, 255] 并转换为 uint8 类型
+  
     if image_array.max() <= 1.0:
         image_array = (image_array * 255).astype(np.uint8)
     else:
-        # 如果数据范围超出了 [0, 1]，直接转换为 uint8 类型
+    
         image_array = np.clip(image_array, 0, 255).astype(np.uint8)
-    # 将 NumPy 数组转换为 PIL 图像
+
     image = Image.fromarray(image_array)
-    # 保存图像
+
 
     image.save(file_path)
 
 import matplotlib.pyplot as plt
 
 def save_residual_map(gt_tensor, recon_tensor, file_path, output_size=(256, 256)):
-    # 移除 batch 和 channel 维度：[1, 1, H, W] → [H, W]
+
     gt_np = gt_tensor.squeeze().detach().cpu().numpy()
     recon_np = recon_tensor.squeeze().detach().cpu().numpy()
 
-    # 计算残差图并归一化
+
     residual = np.abs(gt_np - recon_np)
     residual = residual / (np.max(residual) + 1e-8)
 
-    # 临时保存路径（PNG格式支持Alpha通道）
+
     temp_path = file_path + ".temp.png"
 
-    # 绘图并保存为 PNG
     plt.figure(figsize=(2.56, 2.56), dpi=100)
     im = plt.imshow(residual, cmap='bwr', vmin=0.0, vmax=1.0)
     plt.axis('off')
@@ -71,7 +70,7 @@ def save_residual_map(gt_tensor, recon_tensor, file_path, output_size=(256, 256)
     plt.close()
 
     image = Image.open(temp_path).resize(output_size, Image.BILINEAR)
-    image = image.convert("RGB")  # 添加这一行修复 RGBA 问题
+    image = image.convert("RGB")  
     image.save(file_path)
 
 
@@ -197,6 +196,8 @@ def eval_psnr(loader, model,ets, data_norm=None, eval_type=None, eval_bsize=None
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
+    
     parser.add_argument('--config',default='')
     parser.add_argument('--model',
                         default='')
