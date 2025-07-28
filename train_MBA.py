@@ -13,7 +13,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 import datasets
 import models
 import utils
-from test_muti_blind_twoopt import eval_psnr
+from test_MBA import eval_psnr
 from models.mamber32_arch import  Mamba_ets,aMamba_ets
 import math
 import sys
