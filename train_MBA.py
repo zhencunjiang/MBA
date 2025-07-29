@@ -1,5 +1,3 @@
-# modified from: https://github.com/yinboc/liif
-
 import argparse
 import os
 
