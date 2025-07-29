@@ -43,7 +43,7 @@ def fft_2D(image,factor):
     k_space = fftshift(fft2(image))
 
     _,rows, cols = k_space.shape
-    center_fraction = 1 / factor  # 中心区域比例
+    center_fraction = 1 / factor  
     mask = np.zeros((1,rows, cols))
     center_rows = int(rows * center_fraction // 2)
     center_cols = int(cols * center_fraction // 2)
