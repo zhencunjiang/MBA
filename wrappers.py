@@ -90,11 +90,9 @@ class SRImplicitDownsampled(Dataset):
             img_hr = img_hr[:, :round(h_lr * s), :round(w_lr * s)]
             ref_hr = ref[:, :round(h_lr * s), :round(w_lr * s)]
             ref_kd_lr=ref_kd[:, :round(h_lr * s), :round(w_lr * s)]
-
             img_down = resize_fn(img, (h_lr, w_lr))
             ref_down=resize_fn(ref_hr, (h_lr, w_lr))
             ref_kd_down=resize_fn(ref_kd_lr, (h_lr, w_lr))
-
             crop_lr, crop_hr,crop_ref,crop_ref_kd = img_down, img_hr,ref_down,ref_kd_down
         else:
             w_lr = self.inp_size
@@ -104,22 +102,12 @@ class SRImplicitDownsampled(Dataset):
             crop_hr = img_hr[:, x0: x0 + w_hr, y0: y0 + w_hr]
             crop_ref = ref[:, x0: x0 + w_hr, y0: y0 + w_hr]
             crop_ref_kd=ref_kd[:, x0: x0 + w_hr, y0: y0 + w_hr]
-
-            # crop_hr=torch.from_numpy(crop_hr)
-
             crop_lr = img[:, x0: x0 + w_hr, y0: y0 + w_hr]
             crop_lr = resize_fn(crop_lr, w_lr)
             crop_ref=resize_fn(crop_ref, w_lr)
             crop_ref_kd = resize_fn(crop_ref_kd, w_lr)
 
 
-            # crop_hr = img[:, x0: x0 + w_hr, :]
-            # if crop_hr.shape[0]==3:
-            #     crop_hr=torch.from_numpy(crop_hr.transpose(1,2,0))
-            # crop_hr=torch.from_numpy(crop_hr)
-            # crop_lr = resize_fn(crop_hr, (w_lr,crop_hr.shape[-1]))
-            # print(crop_hr.shape)
-            # print(crop_lr.shape)
 
         if self.augment:
             hflip = random.random() < 0.5
@@ -138,9 +126,6 @@ class SRImplicitDownsampled(Dataset):
             crop_lr = augment(crop_lr)
             crop_hr = augment(crop_hr)
 
-        # crop_lr_up = F.interpolate(crop_lr.unsqueeze(0) , size=(crop_hr.shape[1], crop_hr.shape[2]), mode='bilinear', align_corners=False).squeeze(0)
-        # crop_res=crop_hr-crop_lr_up
-        # _, ret_res_gt = to_pixel_samples(crop_res.contiguous())
         ref_t=torch.abs(crop_ref-crop_ref_kd)
         # print(torch.equal(crop_ref,crop_ref_kd))
 
@@ -162,16 +147,7 @@ class SRImplicitDownsampled(Dataset):
         cell = torch.ones_like(hr_coord)
         cell[:, 0] *= 2 / crop_hr.shape[-2]
         cell[:, 1] *= 2 / crop_hr.shape[-1]
-        # print(hr_rgb.shape)
-        # print(crop_lr.shape)
-        # print(hr_coord.unsqueeze(1).shape)
-        # ret_res_gt=hr_rgb-F.grid_sample(crop_lr, hr_coord.flip(-1).unsqueeze(1), mode='bilinear', \
-        #                      padding_mode='border', align_corners=False)[:, :, 0, :] \
-        #     .permute(0, 2, 1)
-        # #
-        # torch.Size([8, 1, 64, 64])
-        # torch.Size([8, 1, 4096, 2])
-        # print('cell:',cell)
+       
         s_formatted = "{:.2f}".format(s)
         s_tensor = torch.tensor(float(s_formatted))
         return {
@@ -182,7 +158,6 @@ class SRImplicitDownsampled(Dataset):
             'coord': hr_coord,
             'cell': cell,
             'gt': hr_rgb,
-            # 'res':ret_res_gt,
             'scale':s_tensor,
             'img': img_out,
             'ref_txt': ref_t,
